@@ -7,10 +7,14 @@ export class SupabaseService {
   private readonly client: SupabaseClient;
 
   constructor(config: ConfigService) {
-    // service_role client：繞過 RLS，僅限後端使用，切勿外流
+    // admin client：繞過 RLS，僅限後端使用，切勿外流
+    // 支援新版 API key（SUPABASE_SECRET_KEY，sb_secret_...）與舊版 service_role JWT
+    const secretKey =
+      config.get<string>('SUPABASE_SECRET_KEY') ??
+      config.getOrThrow<string>('SUPABASE_SERVICE_ROLE_KEY');
     this.client = createClient(
       config.getOrThrow<string>('SUPABASE_URL'),
-      config.getOrThrow<string>('SUPABASE_SERVICE_ROLE_KEY'),
+      secretKey,
       {
         auth: { persistSession: false, autoRefreshToken: false },
       },
