@@ -34,6 +34,11 @@
 - [ ] `media`：刪除端點（同步刪 Storage 物件）、排序調整
 - [x] `persona-templates` 公開讀取端點 GET `/personas`
 - [x] 物件「新鮮度」查詢參數 `freshWithinDays`（1-90 天，過濾 listed_at）
+- [x] 進階篩選參數（propertyType / minSchool / minBuilder / minMaterial / orientation / superstore）+ sort（newest / price）+ 90 天強制隱藏
+- [x] `ai` module：Gemini 解析建檔 POST `/ai/parse-listing` + 餘額 GET `/ai/tokens`（扣 5 點/次、失敗自動退點、body limit 8MB 支援截圖）
+- [ ] ⚠️ migration `20260710000005_ai_tokens.sql` 尚未套用（MCP 唯讀模式擋 DDL）——SQL Editor 執行或開啟 MCP 寫入後套用
+- [ ] `GEMINI_API_KEY` 待填入 `.env`（AI 建檔功能才會啟用）
+- [ ] Token 儲值流程（目前僅扣點；購買/儲值 Phase 2 金流）
 - [ ] 列表支援符合度全域排序（帶權重參數計算加權分數排序，取代前端當頁排序）
 
 ### 品質 / 安全

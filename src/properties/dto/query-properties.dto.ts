@@ -74,6 +74,50 @@ export class QueryPropertiesDto {
   @Max(90)
   freshWithinDays?: number;
 
+  // --- 進階篩選（獨家數據） ---
+  @IsOptional()
+  @IsIn(['house', 'condo', 'townhouse', 'apartment'])
+  propertyType?: string;
+
+  /** 學區分數下限（0-100，涵蓋幼稚園到高中的綜合排名） */
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  @Max(100)
+  minSchool?: number;
+
+  /** 建商品質下限（1-5） */
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(5)
+  minBuilder?: number;
+
+  /** 建材等級下限（1-5） */
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(5)
+  minMaterial?: number;
+
+  /** 風水座向（日照方向） */
+  @IsOptional()
+  @IsIn(['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'])
+  orientation?: string;
+
+  /** 生活機能：鄰近大賣場（custom_attributes.superstore） */
+  @IsOptional()
+  @IsIn(['true'])
+  superstore?: string;
+
+  /** 排序：系統推薦（前端權重分數）/ 最新上架 / 價格高低 */
+  @IsOptional()
+  @IsIn(['recommended', 'newest', 'price_desc', 'price_asc'])
+  sort?: 'recommended' | 'newest' | 'price_desc' | 'price_asc';
+
   @IsOptional()
   @Type(() => Number)
   @IsInt()

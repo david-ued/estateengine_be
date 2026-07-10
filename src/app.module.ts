@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { AiModule } from './ai/ai.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MediaModule } from './media/media.module';
@@ -24,6 +25,7 @@ import { UsersModule } from './users/users.module';
     ShareLinksModule,
     UsersModule,
     PersonasModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [

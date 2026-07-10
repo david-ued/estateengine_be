@@ -13,7 +13,7 @@ import { UpdatePropertyDto } from './dto/update-property.dto';
 export class PropertiesService {
   constructor(private readonly supabase: SupabaseService) {}
 
-  /** 公開列表：僅回傳已上架物件，支援 PRD 基本 Filter，每頁最多 6-7 筆 */
+  /** 公開列表：僅回傳已上架物件，支援 PRD 基本 + 進階 Filter，每頁最多 6-7 筆 */
   async findPublished(query: QueryPropertiesDto) {
     const from = (query.page - 1) * query.pageSize;
 
@@ -23,8 +23,23 @@ export class PropertiesService {
         count: 'exact',
       })
       .eq('status', 'published')
-      .order('listed_at', { ascending: false })
       .range(from, from + query.pageSize - 1);
+
+    // 排序：最新上架 / 價格；「系統推薦」由前端以買家權重計分排序
+    switch (query.sort) {
+      case 'price_desc':
+        builder = builder.order('price', { ascending: false });
+        break;
+      case 'price_asc':
+        builder = builder.order('price', { ascending: true });
+        break;
+      default:
+        builder = builder.order('listed_at', { ascending: false });
+    }
+
+    // 防禦性過濾：超過 90 天一律不出現在前端（Cron 下架前的保險）
+    const maxAge = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+    builder = builder.gte('listed_at', maxAge);
 
     if (query.city) builder = builder.eq('city', query.city);
     if (query.district) builder = builder.eq('district', query.district);
@@ -34,6 +49,20 @@ export class PropertiesService {
     if (query.maxSqft !== undefined) builder = builder.lte('area_sqft', query.maxSqft);
     if (query.beds !== undefined) builder = builder.gte('beds', query.beds);
     if (query.baths !== undefined) builder = builder.gte('baths', query.baths);
+    if (query.propertyType) builder = builder.eq('property_type', query.propertyType);
+    if (query.minSchool !== undefined) builder = builder.gte('score_school', query.minSchool);
+    if (query.minBuilder !== undefined) {
+      builder = builder.gte('builder_reputation', query.minBuilder);
+    }
+    if (query.minMaterial !== undefined) {
+      builder = builder.gte('material_grade', query.minMaterial);
+    }
+    if (query.orientation) {
+      builder = builder.eq('feng_shui_orientation', query.orientation);
+    }
+    if (query.superstore === 'true') {
+      builder = builder.eq('custom_attributes->>superstore', 'true');
+    }
     if (query.freshWithinDays !== undefined) {
       const cutoff = new Date(
         Date.now() - query.freshWithinDays * 24 * 60 * 60 * 1000,
