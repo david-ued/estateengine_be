@@ -60,8 +60,11 @@ export class PropertiesService {
     if (query.orientation) {
       builder = builder.eq('feng_shui_orientation', query.orientation);
     }
-    if (query.superstore === 'true') {
-      builder = builder.eq('custom_attributes->>superstore', 'true');
+    if (query.amenities) {
+      // AND 條件：每個勾選的生活機能都必須為 true
+      for (const amenity of query.amenities.split(',')) {
+        builder = builder.eq(`custom_attributes->>${amenity}`, 'true');
+      }
     }
     if (query.freshWithinDays !== undefined) {
       const cutoff = new Date(

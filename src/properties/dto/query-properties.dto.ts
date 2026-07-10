@@ -1,5 +1,14 @@
 import { Type } from 'class-transformer';
-import { IsIn, IsInt, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
+import {
+  IsIn,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Matches,
+  Max,
+  Min,
+} from 'class-validator';
 
 /** 房仲可自行切換的物件狀態（強制下架 admin_force 走 Admin 端點） */
 export const AGENT_STATUSES = ['draft', 'published', 'hidden', 'delisted', 'sold'] as const;
@@ -108,10 +117,10 @@ export class QueryPropertiesDto {
   @IsIn(['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'])
   orientation?: string;
 
-  /** 生活機能：鄰近大賣場（custom_attributes.superstore） */
+  /** 生活機能（AND 條件）：逗號分隔的 custom_attributes boolean keys */
   @IsOptional()
-  @IsIn(['true'])
-  superstore?: string;
+  @Matches(/^(superstore|transit_station|park|hospital)(,(superstore|transit_station|park|hospital))*$/)
+  amenities?: string;
 
   /** 排序：系統推薦（前端權重分數）/ 最新上架 / 價格高低 */
   @IsOptional()
