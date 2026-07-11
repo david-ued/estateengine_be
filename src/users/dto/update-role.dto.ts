@@ -1,7 +1,7 @@
 import { IsIn } from 'class-validator';
 
-/** Admin 可指派的角色（super_admin 僅能由 DB 直接設定） */
+/** Admin 可指派任一角色（唯一限制：不能改自己的角色，避免鎖死後台） */
 export class UpdateRoleDto {
-  @IsIn(['buyer', 'agent'])
-  role!: 'buyer' | 'agent';
+  @IsIn(['buyer', 'agent', 'super_admin'])
+  role!: 'buyer' | 'agent' | 'super_admin';
 }

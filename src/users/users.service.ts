@@ -31,8 +31,16 @@ export class UsersService {
     return { items: data, total: count ?? 0, page, pageSize };
   }
 
-  /** Admin 升級/降級角色（buyer ↔ agent；不可動 super_admin） */
-  async updateRole(userId: string, role: 'buyer' | 'agent') {
+  /** Admin 設定任一使用者的角色（buyer / agent / super_admin）；不能改自己以免鎖死後台 */
+  async updateRole(
+    actorId: string,
+    userId: string,
+    role: 'buyer' | 'agent' | 'super_admin',
+  ) {
+    if (actorId === userId) {
+      throw new ForbiddenException('Cannot change your own role');
+    }
+
     const { data: target, error } = await this.supabase.admin
       .from('profiles')
       .select('role')
@@ -41,9 +49,6 @@ export class UsersService {
 
     if (error) throw new InternalServerErrorException(error.message);
     if (!target) throw new NotFoundException(`User ${userId} not found`);
-    if (target.role === 'super_admin') {
-      throw new ForbiddenException('Cannot change a super admin role');
-    }
 
     const { data, error: updateError } = await this.supabase.admin
       .from('profiles')

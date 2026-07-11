@@ -10,6 +10,8 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import type { User } from '@supabase/supabase-js';
+import { CurrentUser } from '../auth/current-user.decorator';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 import { SupabaseAuthGuard } from '../auth/supabase-auth.guard';
@@ -34,9 +36,10 @@ export class UsersController {
 
   @Patch(':id/role')
   updateRole(
+    @CurrentUser() user: User,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateRoleDto,
   ) {
-    return this.users.updateRole(id, dto.role);
+    return this.users.updateRole(user.id, id, dto.role);
   }
 }
