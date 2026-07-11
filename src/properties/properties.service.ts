@@ -178,10 +178,12 @@ export class PropertiesService {
   }
 
   async findOne(id: string) {
+    // 公開端點僅回傳已上架物件；草稿/下架內容由前端以 RLS 提供給管理員與擁有者
     const { data, error } = await this.supabase.admin
       .from('properties')
       .select('*, media(*), agent:profiles(id, display_name, avatar_url, agency_name, bio, phone, social_links)')
       .eq('id', id)
+      .eq('status', 'published')
       .maybeSingle();
 
     if (error) throw new InternalServerErrorException(error.message);
