@@ -12,13 +12,9 @@ import { UserRole } from './user-role.enum';
 import type { AuthenticatedRequest } from './supabase-auth.guard';
 
 // 角色查詢快取：避免每個請求都打一次 DB。
-// TTL 內的角色變更（Admin 升降級）由 invalidateRoleCache 立即失效。
+// 單一 agent 轉向後角色不再於執行期變更（僅 DB 手動調整），TTL 過期即收斂。
 const ROLE_CACHE_TTL_MS = 30_000;
 const roleCache = new Map<string, { role: UserRole; expiresAt: number }>();
-
-export function invalidateRoleCache(userId: string) {
-  roleCache.delete(userId);
-}
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -40,9 +36,6 @@ export class RolesGuard implements CanActivate {
     }
 
     const role = await this.resolveRole(request.user.id);
-
-    // 總管理員永遠放行（後台巡邏、強制下架）
-    if (role === UserRole.SUPER_ADMIN) return true;
 
     if (!requiredRoles.includes(role)) {
       throw new ForbiddenException(

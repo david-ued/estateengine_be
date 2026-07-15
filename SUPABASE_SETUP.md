@@ -60,6 +60,8 @@ SQL Editor → New query → 依序貼上三個檔案內容執行。
 **方式 C — 叫 Claude 用 Supabase MCP 直接套用並跑 advisors 檢查。**
 
 > ✅ **2026-07-10 已套用**：四個 migrations（含 `20260710000004_security_hardening.sql`）已透過 Supabase MCP 套用到專案 `fcbhvukffjbghydqgmmg`，advisors 已檢查。
+>
+> ⚠️ **2026-07-16 待套用**：`20260710000005_ai_tokens.sql`（AI 建檔點數）與 `20260716000001_single_agent_pivot.sql`（單一 agent 轉向：移除 super_admin、新增 favorites / saved_searches / contact_messages / site_settings，見 `PIVOT.md`）。套用後執行 `node scripts/pivot-single-agent.mjs` 做資料歸戶與品牌種子。
 
 ## 4.5 測試帳號與假資料（已建立）
 
@@ -67,8 +69,8 @@ SQL Editor → New query → 依序貼上三個檔案內容執行。
 
 | 角色 | Email | 密碼 |
 |---|---|---|
-| Super Admin | `admin@estateengine.test` | `Admin@2026!` |
-| 房仲（Kevin Wang / Maple Leaf Realty） | `agent@estateengine.test` | `Agent@2026!` |
+| ~~Super Admin~~（2026-07-16 起降為買家，Super Admin 已移除） | `admin@estateengine.test` | `Admin@2026!` |
+| 房仲＝唯一 Agent（跑過 pivot 腳本後名片為 Grace Chen / EstateEngine Realty） | `agent@estateengine.test` | `Agent@2026!` |
 | 買家（Amy Chen） | `buyer@estateengine.test` | `Buyer@2026!` |
 
 > 這些帳號是用 SQL 直接建立的（email 已標記驗證）。GoTrue 的 signup API 會拒絕 `.test` 網域，所以之後從前端註冊新帳號請用真實網域的信箱。
@@ -83,20 +85,17 @@ Dashboard → **Authentication**：
 2. 開發期建議關閉 **Confirm email**（否則註冊後要先點驗證信才能登入）
 3. **URL Configuration**：Site URL 填 `http://localhost:3000`
 
-## 6. 建立第一個 Super Admin
+## 6. 指定唯一 Agent（單一 agent 架構）
 
-角色設計上不可自行升級，第一個管理員要手動點：
-
-1. 前端 `/zh-TW/signup` 註冊一個帳號
-2. SQL Editor 執行：
+2026-07-16 起網站為單一 agent 品牌站，角色只剩 `buyer` / `agent`，且不再有任何升級介面。
+要更換唯一 agent 時，SQL Editor 手動執行：
 
 ```sql
-update public.profiles
-set role = 'super_admin'
-where email = 'you@example.com';
+update public.profiles set role = 'buyer' where role = 'agent';
+update public.profiles set role = 'agent' where email = 'you@example.com';
 ```
 
-之後升級房仲都在 Admin 後台 `/admin/users` 點按鈕即可（買家 ↔ 房仲）。
+> 系統以「唯一一個 role='agent' 的 profile」作為品牌主體（GET /site 取最早建立者），請確保同時只有一個 agent。
 
 ## 7. 啟動與驗收
 

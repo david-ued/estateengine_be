@@ -48,5 +48,9 @@ begin
 end;
 $$;
 
+-- 僅後端（service_role）可扣點；瀏覽器端不得直接呼叫此 SECURITY DEFINER RPC
+revoke execute on function public.spend_tokens(uuid, int, text) from public, anon, authenticated;
+grant execute on function public.spend_tokens(uuid, int, text) to service_role;
+
 -- 開發期：現有房仲贈送 100 點
 update public.profiles set token_balance = 100 where role = 'agent';

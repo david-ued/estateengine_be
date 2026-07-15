@@ -19,9 +19,12 @@ export class PropertiesService {
 
     let builder = this.supabase.admin
       .from('properties')
-      .select('*, media(*), agent:profiles(id, display_name, avatar_url, agency_name, phone)', {
-        count: 'exact',
-      })
+      .select(
+        '*, media(*), agent:profiles(id, display_name, avatar_url, agency_name, phone)',
+        {
+          count: 'exact',
+        },
+      )
       .eq('status', 'published')
       .range(from, from + query.pageSize - 1);
 
@@ -38,19 +41,27 @@ export class PropertiesService {
     }
 
     // 防禦性過濾：超過 90 天一律不出現在前端（Cron 下架前的保險）
-    const maxAge = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+    const maxAge = new Date(
+      Date.now() - 90 * 24 * 60 * 60 * 1000,
+    ).toISOString();
     builder = builder.gte('listed_at', maxAge);
 
     if (query.city) builder = builder.eq('city', query.city);
     if (query.district) builder = builder.eq('district', query.district);
-    if (query.minPrice !== undefined) builder = builder.gte('price', query.minPrice);
-    if (query.maxPrice !== undefined) builder = builder.lte('price', query.maxPrice);
-    if (query.minSqft !== undefined) builder = builder.gte('area_sqft', query.minSqft);
-    if (query.maxSqft !== undefined) builder = builder.lte('area_sqft', query.maxSqft);
+    if (query.minPrice !== undefined)
+      builder = builder.gte('price', query.minPrice);
+    if (query.maxPrice !== undefined)
+      builder = builder.lte('price', query.maxPrice);
+    if (query.minSqft !== undefined)
+      builder = builder.gte('area_sqft', query.minSqft);
+    if (query.maxSqft !== undefined)
+      builder = builder.lte('area_sqft', query.maxSqft);
     if (query.beds !== undefined) builder = builder.gte('beds', query.beds);
     if (query.baths !== undefined) builder = builder.gte('baths', query.baths);
-    if (query.propertyType) builder = builder.eq('property_type', query.propertyType);
-    if (query.minSchool !== undefined) builder = builder.gte('score_school', query.minSchool);
+    if (query.propertyType)
+      builder = builder.eq('property_type', query.propertyType);
+    if (query.minSchool !== undefined)
+      builder = builder.gte('score_school', query.minSchool);
     if (query.minBuilder !== undefined) {
       builder = builder.gte('builder_reputation', query.minBuilder);
     }
@@ -161,27 +172,13 @@ export class PropertiesService {
     });
   }
 
-  /** Admin 後台巡邏：全部物件（所有狀態、含房仲資訊） */
-  async findAllForAdmin(page: number, pageSize: number) {
-    const from = (page - 1) * pageSize;
-
-    const { data, error, count } = await this.supabase.admin
-      .from('properties')
-      .select('*, agent:profiles(id, display_name, full_name, agency_name)', {
-        count: 'exact',
-      })
-      .order('created_at', { ascending: false })
-      .range(from, from + pageSize - 1);
-
-    if (error) throw new InternalServerErrorException(error.message);
-    return { items: data, total: count ?? 0, page, pageSize };
-  }
-
   async findOne(id: string) {
     // 公開端點僅回傳已上架物件；草稿/下架內容由前端以 RLS 提供給管理員與擁有者
     const { data, error } = await this.supabase.admin
       .from('properties')
-      .select('*, media(*), agent:profiles(id, display_name, avatar_url, agency_name, bio, phone, social_links)')
+      .select(
+        '*, media(*), agent:profiles(id, display_name, avatar_url, agency_name, bio, phone, social_links)',
+      )
       .eq('id', id)
       .eq('status', 'published')
       .maybeSingle();
@@ -259,23 +256,6 @@ export class PropertiesService {
     const { data, error } = await this.supabase.admin
       .from('properties')
       .update(patch)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) throw new InternalServerErrorException(error.message);
-    return data;
-  }
-
-  /** 總管理員強制下架異常/違規物件 */
-  async forceDelist(id: string, reason = 'admin_force') {
-    const { data, error } = await this.supabase.admin
-      .from('properties')
-      .update({
-        status: 'delisted',
-        delisted_at: new Date().toISOString(),
-        delist_reason: reason,
-      })
       .eq('id', id)
       .select()
       .single();

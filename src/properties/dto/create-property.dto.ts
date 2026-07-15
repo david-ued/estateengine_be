@@ -114,18 +114,38 @@ export class CreatePropertyDto {
   customAttributes?: Record<string, unknown>;
 
   // --- 權重評分系統的維度分數（0-100，房仲自評） ---
-  @IsOptional() @Type(() => Number) @IsInt() @Min(0) @Max(100)
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  @Max(100)
   scoreSchool?: number;
 
-  @IsOptional() @Type(() => Number) @IsInt() @Min(0) @Max(100)
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  @Max(100)
   scoreTransit?: number;
 
-  @IsOptional() @Type(() => Number) @IsInt() @Min(0) @Max(100)
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  @Max(100)
   scoreMaterial?: number;
 
-  @IsOptional() @Type(() => Number) @IsInt() @Min(0) @Max(100)
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  @Max(100)
   scoreFengShui?: number;
 
-  @IsOptional() @Type(() => Number) @IsInt() @Min(0) @Max(100)
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  @Max(100)
   scoreEnvironment?: number;
 }

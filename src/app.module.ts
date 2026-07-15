@@ -6,12 +6,15 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AiModule } from './ai/ai.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ContactModule } from './contact/contact.module';
+import { FavoritesModule } from './favorites/favorites.module';
 import { MediaModule } from './media/media.module';
 import { PersonasModule } from './personas/personas.module';
 import { PropertiesModule } from './properties/properties.module';
+import { SavedSearchesModule } from './saved-searches/saved-searches.module';
 import { ShareLinksModule } from './share-links/share-links.module';
+import { SiteModule } from './site/site.module';
 import { SupabaseModule } from './supabase/supabase.module';
-import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -23,14 +26,14 @@ import { UsersModule } from './users/users.module';
     PropertiesModule,
     MediaModule,
     ShareLinksModule,
-    UsersModule,
+    FavoritesModule,
+    SavedSearchesModule,
+    ContactModule,
+    SiteModule,
     PersonasModule,
     AiModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    { provide: APP_GUARD, useClass: ThrottlerGuard },
-  ],
+  providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}

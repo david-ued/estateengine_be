@@ -1,10 +1,8 @@
 import {
   Body,
   Controller,
-  DefaultValuePipe,
   Get,
   Param,
-  ParseIntPipe,
   ParseUUIDPipe,
   Patch,
   Post,
@@ -51,16 +49,6 @@ export class PropertiesController {
   @Roles(UserRole.AGENT)
   mineStats(@CurrentUser() user: User) {
     return this.properties.getMineStats(user.id);
-  }
-
-  @Get('admin/all')
-  @UseGuards(SupabaseAuthGuard, RolesGuard)
-  @Roles(UserRole.SUPER_ADMIN)
-  adminAll(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('pageSize', new DefaultValuePipe(20), ParseIntPipe) pageSize: number,
-  ) {
-    return this.properties.findAllForAdmin(page, pageSize);
   }
 
   @Get(':id')
@@ -114,14 +102,5 @@ export class PropertiesController {
     @Body() dto: ChangeStatusDto,
   ) {
     return this.properties.changeStatus(user.id, id, dto.status);
-  }
-
-  // --- 總管理員端點（後台巡邏、強制下架） ---
-
-  @Post(':id/force-delist')
-  @UseGuards(SupabaseAuthGuard, RolesGuard)
-  @Roles(UserRole.SUPER_ADMIN)
-  forceDelist(@Param('id', ParseUUIDPipe) id: string) {
-    return this.properties.forceDelist(id);
   }
 }
