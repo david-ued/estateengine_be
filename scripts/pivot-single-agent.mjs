@@ -78,7 +78,8 @@ async function main() {
   const { data: agents, error: agentsError } = await supabase
     .from('profiles')
     .select('id, email, role, created_at')
-    .in('role', ['agent', 'super_admin'])
+    // super_admin 已於 migration 20260716000001 移除（enum 不再有此值）；此處僅需 agent
+    .in('role', ['agent'])
     .order('created_at', { ascending: true });
   if (agentsError) throw agentsError;
 
