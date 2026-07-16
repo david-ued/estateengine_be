@@ -16,6 +16,14 @@ import type { AuthenticatedRequest } from './supabase-auth.guard';
 const ROLE_CACHE_TTL_MS = 30_000;
 const roleCache = new Map<string, { role: UserRole; expiresAt: number }>();
 
+/**
+ * 使角色快取立即失效（admin 變更某用戶角色 / 刪除用戶後呼叫），
+ * 讓變更不必等 TTL 過期即生效。
+ */
+export function invalidateRoleCache(userId: string) {
+  roleCache.delete(userId);
+}
+
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(

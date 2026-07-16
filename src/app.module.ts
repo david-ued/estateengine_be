@@ -15,6 +15,7 @@ import { SavedSearchesModule } from './saved-searches/saved-searches.module';
 import { ShareLinksModule } from './share-links/share-links.module';
 import { SiteModule } from './site/site.module';
 import { SupabaseModule } from './supabase/supabase.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { SupabaseModule } from './supabase/supabase.module';
     SiteModule,
     PersonasModule,
     AiModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
