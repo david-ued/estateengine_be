@@ -14,7 +14,8 @@ export class FavoritesService {
     const { data, error } = await this.supabase.admin
       .from('favorites')
       .select(
-        'created_at, property:properties(*, media(*), agent:profiles(id, display_name, avatar_url, agency_name, phone))',
+        // agent:profiles 需指定 FK 消歧義（favorites 使 properties↔profiles 成 m2m，見 properties.service）
+        'created_at, property:properties(*, media(*), agent:profiles!properties_agent_id_fkey(id, display_name, avatar_url, agency_name, phone))',
       )
       .eq('user_id', userId)
       .order('created_at', { ascending: false });

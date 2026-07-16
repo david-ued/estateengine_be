@@ -20,7 +20,9 @@ export class PropertiesService {
     let builder = this.supabase.admin
       .from('properties')
       .select(
-        '*, media(*), agent:profiles(id, display_name, avatar_url, agency_name, phone)',
+        // 指定 FK 消歧義：favorites 表讓 properties↔profiles 多出一條 m2m 關係，
+        // 需明確走 properties.agent_id → profiles（否則 PostgREST 回 embed 模糊 500）
+        '*, media(*), agent:profiles!properties_agent_id_fkey(id, display_name, avatar_url, agency_name, phone)',
         {
           count: 'exact',
         },
@@ -177,7 +179,7 @@ export class PropertiesService {
     const { data, error } = await this.supabase.admin
       .from('properties')
       .select(
-        '*, media(*), agent:profiles(id, display_name, avatar_url, agency_name, bio, phone, social_links)',
+        '*, media(*), agent:profiles!properties_agent_id_fkey(id, display_name, avatar_url, agency_name, bio, phone, social_links)',
       )
       .eq('id', id)
       .eq('status', 'published')
