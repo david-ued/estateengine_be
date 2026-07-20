@@ -62,6 +62,11 @@ export class CreatePropertyDto {
   @IsBoolean()
   hasParking?: boolean;
 
+  /** 預售屋（尚未完工）：前台 CTA 改為「提醒我」 */
+  @IsOptional()
+  @IsBoolean()
+  isPresale?: boolean;
+
   // --- 獨家數據建檔（巨觀：交通/學區/淹水區/地勢；微觀：風水/建商/建材/地下室） ---
   @IsOptional()
   @IsString()

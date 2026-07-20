@@ -295,6 +295,7 @@ function toRow(dto: CreatePropertyDto | UpdatePropertyDto) {
     baths: 'baths',
     propertyType: 'property_type',
     hasParking: 'has_parking',
+    isPresale: 'is_presale',
     schoolDistrict: 'school_district',
     transitNotes: 'transit_notes',
     floodZone: 'flood_zone',

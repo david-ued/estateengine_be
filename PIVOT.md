@@ -27,6 +27,12 @@
 - [x] 2026-07-16 migration 撰寫：`supabase/migrations/20260716000001_single_agent_pivot.sql`
 - [x] 2026-07-16 modules 增刪完成（tsc 通過；`no-unsafe-*` lint 為既有債務模式）
 - [x] 2026-07-16 資料歸戶腳本：`scripts/pivot-single-agent.mjs`（物件/分享清單歸戶、降級其他 agent、品牌名片、site_settings 種子）
-- [ ] ⚠️ **需手動**：套用 migration（本 session 無 Supabase MCP token、無 CLI）——SQL Editor 貼上執行，或授權 MCP 後再跑；順帶確認 `20260710000005_ai_tokens.sql` 是否已套用（先前 MCP 唯讀被擋）
-- [ ] ⚠️ **需手動**：`node scripts/pivot-single-agent.mjs`（本 session 權限限制未執行；會改動遠端資料，請確認後執行）
+- [x] ~~需手動：套用 migration~~ ✅ 2026-07-20 以 REST 唯讀確認 pivot 各表（contact_messages / site_settings / favorites / saved_searches）皆已存在
+- [x] ~~需手動：`node scripts/pivot-single-agent.mjs`~~ ✅ 2026-07-20 確認品牌名片 / site_settings 已種（前台 footer 顯示電話 / email / LINE）
 - [ ] SUPABASE_SETUP.md 更新
+
+### 2026-07-20 預售屋支援（David 指示）
+
+- [x] migration `20260720000001_presale.sql`：`properties.is_presale boolean not null default false`
+- [x] `CreatePropertyDto.isPresale` + `toRow` 對應 `is_presale`（tsc 通過；lint 無新增問題）
+- [ ] ⚠️ **需手動**：SQL Editor 執行 `20260720000001_presale.sql`（本 session Supabase MCP 仍無 access token）。**未套用前，agent 後台儲存物件會因 `is_presale` 欄位不存在而失敗**（前端固定送出該欄位），請儘早執行。
