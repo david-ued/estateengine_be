@@ -35,4 +35,5 @@
 
 - [x] migration `20260720000001_presale.sql`：`properties.is_presale boolean not null default false`
 - [x] `CreatePropertyDto.isPresale` + `toRow` 對應 `is_presale`（tsc 通過；lint 無新增問題）
-- [ ] ⚠️ **需手動**：SQL Editor 執行 `20260720000001_presale.sql`（本 session Supabase MCP 仍無 access token）。**未套用前，agent 後台儲存物件會因 `is_presale` 欄位不存在而失敗**（前端固定送出該欄位），請儘早執行。
+- [x] ~~需手動：SQL Editor 執行 `20260720000001_presale.sql`~~ ✅ 2026-07-20 已透過 Supabase MCP `apply_migration` 套用到遠端（migration 名稱 `presale`）；驗證：`is_presale boolean NOT NULL DEFAULT false`，既有 10 筆物件皆可讀、值為 false
+- [x] 2026-07-20 E2E 驗證預售屋全流程（Playwright headless，暫時測試 agent 跑完即刪）：後台勾選預售屋建檔＋上架 → 搜尋卡片黑底金字「預售屋」徽章 → 內頁徽章＋「有新進度提醒我」CTA → 提醒登記寫入 inbox（【預售屋提醒登記】前綴）→ 非預售物件 CTA 仍為「詢問此物件」，全部通過
