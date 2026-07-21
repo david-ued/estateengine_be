@@ -5,6 +5,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AiModule } from './ai/ai.module';
 import { AppController } from './app.controller';
+import { ArticlesModule } from './articles/articles.module';
 import { AppService } from './app.service';
 import { ContactModule } from './contact/contact.module';
 import { FavoritesModule } from './favorites/favorites.module';
@@ -31,6 +32,7 @@ import { UsersModule } from './users/users.module';
     SavedSearchesModule,
     ContactModule,
     SiteModule,
+    ArticlesModule,
     PersonasModule,
     AiModule,
     UsersModule,

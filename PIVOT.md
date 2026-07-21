@@ -46,3 +46,9 @@
 - [x] FE：建檔表單 MLS® 編號欄 + 內頁其他資訊列；聯絡表單/預售屋提醒 CASL 必勾（HTML required，未勾擋送出）；footer + 內頁名片 brokerage 條件揭露（`agency_name` 目前 null 畫面不變；`license_no` 已設，footer 新增「Lic. …」小字）
 - [ ] ⚠️ brokerage 名稱揭露為 BCFSA 要求，與「前台不顯示仲介公司」決策衝突——待與 Tim / brokerage 確認後填回 `profiles.agency_name`
 
+### 2026-07-21 專欄部落格（Blog，見 FE PIVOT.md 第五輪）
+
+- [x] 新增 `articles` module：公開 `GET /articles`（分頁 + `featured=`）/ `GET /articles/:slug`（含作者名片 embed）；agent 限定 `GET /articles/mine`、`POST`、`PATCH /:id`、`DELETE /:id`（`SupabaseAuthGuard` + `RolesGuard`，author_id 過濾）
+- [x] 內文 `content_html` 寫入前以 `sanitize-html` 白名單消毒（新依賴）；slug 由標題產生（非拉丁退回亂數）、撞號補尾碼；首次發佈才記 `published_at`
+- [x] migration `20260721000002_articles.sql`：`articles` 表 + RLS（公開讀已發佈 / 作者管自己的）+ `article-media` 公開 bucket（10MB、agent 僅能寫自己 uid 資料夾）✅ 已透過 Supabase MCP `apply_migration` 套用遠端（名稱 `articles`）；`get_advisors` 無新增問題
+- [x] 驗證：`nest build` 通過；smoke test 種文/讀取/401 保護皆正常；Playwright E2E（暫時 agent）走完 寫文→傳圖→發佈→前台→轉回草稿 全流程通過（測試資料已清除）
