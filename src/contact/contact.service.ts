@@ -21,6 +21,7 @@ export class ContactService {
         message: dto.message,
         property_id: dto.propertyId ?? null,
         locale: dto.locale ?? null,
+        casl_consent_at: dto.caslConsent ? new Date().toISOString() : null,
       });
 
     if (error) throw new InternalServerErrorException(error.message);

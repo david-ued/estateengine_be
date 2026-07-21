@@ -101,7 +101,9 @@ export class MediaService {
     if (error) throw new InternalServerErrorException(error.message);
     if (!data) throw new NotFoundException(`Property ${propertyId} not found`);
     if (data.agent_id !== agentId) {
-      throw new ForbiddenException('You can only manage media of your own listings');
+      throw new ForbiddenException(
+        'You can only manage media of your own listings',
+      );
     }
   }
 
@@ -130,8 +132,12 @@ export class MediaService {
   }
 
   private validateFile(mimeType: string, fileSizeBytes: number) {
-    const isImage = (ALLOWED_IMAGE_MIME_TYPES as readonly string[]).includes(mimeType);
-    const isVideo = (ALLOWED_VIDEO_MIME_TYPES as readonly string[]).includes(mimeType);
+    const isImage = (ALLOWED_IMAGE_MIME_TYPES as readonly string[]).includes(
+      mimeType,
+    );
+    const isVideo = (ALLOWED_VIDEO_MIME_TYPES as readonly string[]).includes(
+      mimeType,
+    );
 
     if (!isImage && !isVideo) {
       throw new BadRequestException(`Unsupported file type: ${mimeType}`);

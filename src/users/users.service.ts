@@ -104,7 +104,8 @@ export class UsersService {
       .select('id, email, full_name, role')
       .single();
 
-    if (updateError) throw new InternalServerErrorException(updateError.message);
+    if (updateError)
+      throw new InternalServerErrorException(updateError.message);
 
     invalidateRoleCache(userId);
     return data;

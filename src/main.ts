@@ -4,7 +4,8 @@ import { json, urlencoded } from 'express';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 
-const escapeRegExp = (value: string) => value.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
+const escapeRegExp = (value: string) =>
+  value.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -24,7 +25,10 @@ async function bootstrap() {
 
   const originMatchers: (string | RegExp)[] = corsOrigins.map((entry) =>
     entry.includes('*')
-      ? new RegExp(`^${entry.split('*').map(escapeRegExp).join('[a-z0-9-]+')}$`, 'i')
+      ? new RegExp(
+          `^${entry.split('*').map(escapeRegExp).join('[a-z0-9-]+')}$`,
+          'i',
+        )
       : entry,
   );
 

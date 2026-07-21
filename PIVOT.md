@@ -37,3 +37,12 @@
 - [x] `CreatePropertyDto.isPresale` + `toRow` 對應 `is_presale`（tsc 通過；lint 無新增問題）
 - [x] ~~需手動：SQL Editor 執行 `20260720000001_presale.sql`~~ ✅ 2026-07-20 已透過 Supabase MCP `apply_migration` 套用到遠端（migration 名稱 `presale`）；驗證：`is_presale boolean NOT NULL DEFAULT false`，既有 10 筆物件皆可讀、值為 false
 - [x] 2026-07-20 E2E 驗證預售屋全流程（Playwright headless，暫時測試 agent 跑完即刪）：後台勾選預售屋建檔＋上架 → 搜尋卡片黑底金字「預售屋」徽章 → 內頁徽章＋「有新進度提醒我」CTA → 提醒登記寫入 inbox（【預售屋提醒登記】前綴）→ 非預售物件 CTA 仍為「詢問此物件」，全部通過
+
+### 2026-07-21 MLS 合規前置（David 指示：先做簡單的，其餘進 TODO）
+
+- [x] 「MLS 認證房仲正式使用」缺口分析 → 完整清單見 `TODO.md`「🎯 MLS 認證房仲正式使用缺口」
+- [x] migration `20260721000001_mls_compliance.sql` 已套用遠端：`properties.mls_number`、`contact_messages.casl_consent_at`
+- [x] BE：`CreatePropertyDto.mlsNumber`、`CreateContactMessageDto.caslConsent`（勾選當下記 `casl_consent_at`，已驗證寫入）
+- [x] FE：建檔表單 MLS® 編號欄 + 內頁其他資訊列；聯絡表單/預售屋提醒 CASL 必勾（HTML required，未勾擋送出）；footer + 內頁名片 brokerage 條件揭露（`agency_name` 目前 null 畫面不變；`license_no` 已設，footer 新增「Lic. …」小字）
+- [ ] ⚠️ brokerage 名稱揭露為 BCFSA 要求，與「前台不顯示仲介公司」決策衝突——待與 Tim / brokerage 確認後填回 `profiles.agency_name`
+

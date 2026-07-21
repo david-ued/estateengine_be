@@ -8,6 +8,7 @@ import {
   IsOptional,
   IsString,
   Max,
+  MaxLength,
   Min,
 } from 'class-validator';
 
@@ -66,6 +67,12 @@ export class CreatePropertyDto {
   @IsOptional()
   @IsBoolean()
   isPresale?: boolean;
+
+  /** MLS® 刊登編號（手動建檔可空；DDF 串接後為同步對照鍵） */
+  @IsOptional()
+  @IsString()
+  @MaxLength(30)
+  mlsNumber?: string;
 
   // --- 獨家數據建檔（巨觀：交通/學區/淹水區/地勢；微觀：風水/建商/建材/地下室） ---
   @IsOptional()

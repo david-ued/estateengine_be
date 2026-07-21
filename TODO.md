@@ -38,6 +38,21 @@
 - [ ] Token 儲值流程（目前僅扣點；金流 Phase 2）
 - [ ] 聯絡表單通知（新訊息 email 通知 agent）
 
+## 🎯 MLS 認證房仲正式使用缺口（2026-07-21 分析）
+
+> 盤點「給 MLS 認證房仲當正式工作平台」還缺什麼。**已做（同日）**：migration
+> `20260721000001_mls_compliance.sql`（`properties.mls_number` + `contact_messages.casl_consent_at`，已套用遠端）、
+> DTO 與前台對應欄位、聯絡表單/預售屋提醒 CASL 必勾同意、brokerage/牌照 footer 條件揭露。
+> 其餘依優先序：
+
+- [ ] ⚠️ **合規確認（免寫程式，最優先）**：BCFSA 廣告規範要求揭露 brokerage 名稱，與「前台不顯示仲介公司」的 PIVOT 決策衝突。前台已改為「`profiles.agency_name` 一經設定即於 footer + 內頁名片小字顯示」（目前為 null、畫面不變）——需與 Tim / 其 brokerage 確認後把名稱填回
+- [ ] **Email service（所有通知的地基）**：Resend / Postmark 擇一打通——聯絡表單通知 agent、預售屋提醒、saved-search 新物件通知。寄行銷信前必查 `casl_consent_at`，每封附退訂連結（CASL）
+- [ ] **CREA DDF® 串接（工程量最大）**：RESO Web API 匯入 listing + 定時同步價格/狀態/下架，以 `mls_number` 為對照鍵；手動建檔保留給 pocket listing / 預售屋。互惠展示物件必須帶「Listed by ○○ Brokerage」歸屬字樣（DDF 顯示規則）
+- [ ] **IDX/VOW 規則**：成交價／Sold 資料屬 VOW 範疇，必須登入才可見——重用現有會員 gating 機制
+- [ ] **CRM lite**：`contact_messages` 加 lead 狀態（新進/跟進中/已約看/成交）與備註欄，inbox 對應 UI
+- [ ] **文件管理**：floor plan / strata 文件 / disclosure PDF 上傳與（可選 gating 的）下載（media 擴充）
+- [ ] **Seller 週報**：把現有 view / dwell / video 數據輸出成可寄給屋主的報告（低成本高感知）
+
 ## 品質 / 安全
 - [ ] 全域 exception filter（統一錯誤格式、request id、production 隱藏內部訊息）
 - [ ] unit / e2e 測試（guards、properties service、favorites、contact、cron）

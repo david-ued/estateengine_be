@@ -117,7 +117,8 @@ export class ShareLinksService {
       .delete()
       .eq('id', id);
 
-    if (deleteError) throw new InternalServerErrorException(deleteError.message);
+    if (deleteError)
+      throw new InternalServerErrorException(deleteError.message);
     return { ok: true };
   }
 }

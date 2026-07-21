@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsEmail,
   IsIn,
   IsOptional,
@@ -36,4 +37,9 @@ export class CreateContactMessageDto {
   @IsOptional()
   @IsIn(['zh-TW', 'en'])
   locale?: string;
+
+  /** CASL：同意接收商業電子訊息（勾選當下由後端記 casl_consent_at） */
+  @IsOptional()
+  @IsBoolean()
+  caslConsent?: boolean;
 }
