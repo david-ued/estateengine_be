@@ -12,6 +12,7 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { MediaModule } from './media/media.module';
 import { PersonasModule } from './personas/personas.module';
 import { PropertiesModule } from './properties/properties.module';
+import { ProspectsModule } from './prospects/prospects.module';
 import { SavedSearchesModule } from './saved-searches/saved-searches.module';
 import { ShareLinksModule } from './share-links/share-links.module';
 import { SiteModule } from './site/site.module';
@@ -33,6 +34,7 @@ import { UsersModule } from './users/users.module';
     ContactModule,
     SiteModule,
     ArticlesModule,
+    ProspectsModule,
     PersonasModule,
     AiModule,
     UsersModule,

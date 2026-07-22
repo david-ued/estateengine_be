@@ -60,3 +60,14 @@
 - [x] FE：建檔表單勾選、搜尋「更多條件」三態 chips（不限/可養寵物/不可養寵物）、內頁室內資訊「寵物」列、zh-TW / en 字典同步（詳見 FE PIVOT.md 第六輪）
 - [x] 驗證：BE / FE tsc 0 錯誤；本機 API 實測 `petsAllowed=false` 回傳既有 7 筆、`petsAllowed=true` 回空（既有物件預設 false）、非法值 400
 
+### 2026-07-22 Prospect CRM（David 指示：Tim 訊息的 1 / 4 / 5，見 FE PIVOT.md 第七輪）
+
+- [x] migration `20260722000002_prospects.sql` ✅ 已透過 Supabase MCP `apply_migration` 套用遠端（名稱 `prospects`）：
+  - `prospect_profiles`（user_id PK→profiles cascade；`pre_approval_status` none/in_progress/approved、`pre_approval_amount`、`proof_of_funds`、`buyer_note`、`agent_note`）
+  - `property_interests`（buyer×property unique；`decision` considering/locked_in/walked_away、`act_fast`、`agent_note`、`decided_at`；buyer/property 索引）
+  - 兩表 RLS 啟用但**無 client policy**（僅 BE service_role）：`agent_note` 要對買家保密，RLS 藏不住單一欄位，欄位級權限由 BE 端點的欄位集控制
+- [x] 新增 `prospects` module：
+  - 買家自助（`SupabaseAuthGuard`）：`GET/PUT /prospects/me`（財務申報，整份覆寫；回應排除 agent_note）、`GET /prospects/me/interests`、`PUT /prospects/me/interests/:propertyId`（表態 upsert，act_fast 可見、agent_note 不可見）
+  - Agent CRM（`RolesGuard @Roles(AGENT)`）：`GET /prospects`（全部買家＋財務＋鎖定/跳過/Act Fast/收藏彙總＋最後活動排序）、`GET /prospects/:userId`（明細：profile＋財務含 agent_note＋表態含物件 embed＋收藏前 50）、`PATCH /prospects/:userId`（部分更新，不覆寫 buyer_note）、`PUT /prospects/:userId/interests/:propertyId`（Act Fast/備註/代為表態 upsert，收藏未表態可直接建立）
+  - `/me` 路由宣告在 `/:userId` 之前避免被萬用參數吃掉；`decided_at` 僅買家實際表態（非 considering）時記錄
+- [x] 驗證：tsc / eslint 0 新增錯誤；E2E（暫時 buyer+agent，跑完即刪）：買家申報→收藏+lock-in→買家打 CRM 端點 403→agent 列表彙總/明細→agent 改財務（buyer_note 保留）+Act Fast（decision 保留）→買家看得到 act_fast、兩處 agent_note 都拿不到→FE 三頁渲染，全部通過
