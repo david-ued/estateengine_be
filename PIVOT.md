@@ -52,3 +52,11 @@
 - [x] 內文 `content_html` 寫入前以 `sanitize-html` 白名單消毒（新依賴）；slug 由標題產生（非拉丁退回亂數）、撞號補尾碼；首次發佈才記 `published_at`
 - [x] migration `20260721000002_articles.sql`：`articles` 表 + RLS（公開讀已發佈 / 作者管自己的）+ `article-media` 公開 bucket（10MB、agent 僅能寫自己 uid 資料夾）✅ 已透過 Supabase MCP `apply_migration` 套用遠端（名稱 `articles`）；`get_advisors` 無新增問題
 - [x] 驗證：`nest build` 通過；smoke test 種文/讀取/401 保護皆正常；Playwright E2E（暫時 agent）走完 寫文→傳圖→發佈→前台→轉回草稿 全流程通過（測試資料已清除）
+
+### 2026-07-22 可養寵物篩選（David 指示）
+
+- [x] migration `20260722000001_pets_allowed.sql`：`properties.pets_allowed boolean not null default false` ✅ 已透過 Supabase MCP `apply_migration` 套用遠端（名稱 `pets_allowed`）
+- [x] `CreatePropertyDto.petsAllowed` + `toRow` 對應 `pets_allowed`；`QueryPropertiesDto.petsAllowed`（`@IsIn(['true','false'])` 三態：不帶 = 不限）→ `findPublished` 以 `eq('pets_allowed', …)` 過濾
+- [x] FE：建檔表單勾選、搜尋「更多條件」三態 chips（不限/可養寵物/不可養寵物）、內頁室內資訊「寵物」列、zh-TW / en 字典同步（詳見 FE PIVOT.md 第六輪）
+- [x] 驗證：BE / FE tsc 0 錯誤；本機 API 實測 `petsAllowed=false` 回傳既有 7 筆、`petsAllowed=true` 回空（既有物件預設 false）、非法值 400
+

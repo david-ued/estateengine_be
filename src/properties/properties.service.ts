@@ -62,6 +62,8 @@ export class PropertiesService {
     if (query.baths !== undefined) builder = builder.gte('baths', query.baths);
     if (query.propertyType)
       builder = builder.eq('property_type', query.propertyType);
+    if (query.petsAllowed !== undefined)
+      builder = builder.eq('pets_allowed', query.petsAllowed === 'true');
     if (query.minSchool !== undefined)
       builder = builder.gte('score_school', query.minSchool);
     if (query.minBuilder !== undefined) {
@@ -296,6 +298,7 @@ function toRow(dto: CreatePropertyDto | UpdatePropertyDto) {
     propertyType: 'property_type',
     hasParking: 'has_parking',
     isPresale: 'is_presale',
+    petsAllowed: 'pets_allowed',
     mlsNumber: 'mls_number',
     schoolDistrict: 'school_district',
     transitNotes: 'transit_notes',

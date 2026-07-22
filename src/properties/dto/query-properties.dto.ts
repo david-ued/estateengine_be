@@ -94,6 +94,11 @@ export class QueryPropertiesDto {
   @IsIn(['house', 'condo', 'townhouse', 'apartment'])
   propertyType?: string;
 
+  /** 寵物三態：'true' 只看可養、'false' 只看不可養；不帶 = 不限 */
+  @IsOptional()
+  @IsIn(['true', 'false'])
+  petsAllowed?: 'true' | 'false';
+
   /** 學區分數下限（0-100，涵蓋幼稚園到高中的綜合排名） */
   @IsOptional()
   @Type(() => Number)

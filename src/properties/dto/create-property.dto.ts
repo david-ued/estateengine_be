@@ -68,6 +68,10 @@ export class CreatePropertyDto {
   @IsBoolean()
   isPresale?: boolean;
 
+  @IsOptional()
+  @IsBoolean()
+  petsAllowed?: boolean;
+
   /** MLS® 刊登編號（手動建檔可空；DDF 串接後為同步對照鍵） */
   @IsOptional()
   @IsString()
